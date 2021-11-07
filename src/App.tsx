@@ -55,6 +55,29 @@ const App: React.VFC = () => {
         console.log('Transaction failed', err);
         <Alert severity="error">Transaction failed: {err}</Alert>
       })
+    console.log(resp);
+  }
+
+  async function deployContract() {
+    try {
+      console.log(json.bytecode);
+      await instance?.deploy({ data: json.bytecode }).send({ from: accounts[0] })
+        .once("transactionHash", (txHash: any) => {
+          console.log('Transaction', txHash, 'sent.');
+          <Alert severity="info">Transaction {txHash} sent.</Alert>
+        })
+        .once("receipt", () => {
+          console.log('Transaction complete!');
+          <Alert severity="success">Transaction complete!</Alert>
+        })
+        .on("error", (err: any) => {
+          console.log('Transaction failed', err);
+          <Alert severity="error">Transaction failed: {err}</Alert>
+        })
+    } catch (err) {
+      console.log(err);
+
+    }
   }
 
   // {accounts.map((acc) => {
@@ -73,6 +96,7 @@ const App: React.VFC = () => {
               <input type="submit" value="Set Oracle"></input>
             </form>
             <button onClick={getOutcomes}>Outcomes</button>
+            <button onClick={deployContract}>Deploy</button>
             {/* <button onClick={runExample} >click</button> */}
           </>
           : <div>
